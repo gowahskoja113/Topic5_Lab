@@ -2,9 +2,6 @@ package com.example.lab1.controller;
 
 import com.example.lab1.dto.EmployeeRequest;
 import com.example.lab1.dto.EmployeeResponse;
-import com.example.lab1.mapper.EmployeeMapper;
-import com.example.lab1.repository.EmployeeRepository;
-import com.example.lab1.entity.Employee;
 import com.example.lab1.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

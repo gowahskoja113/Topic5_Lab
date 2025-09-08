@@ -1,42 +1,21 @@
-package com.example.lab1.entity;
+package com.example.lab1.dto;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+public class CustomerResponse {
 
-@Entity
-@Table(name = "customers")
-public class Customer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id")
-    private Integer customerId;
-
-    @Column(name = "customer_name")
+    private Integer id;
     private String customerName;
-
-    @Column(name = "address")
     private String address;
-
-    @Column(name = "city")
     private String city;
-
-    @Column(name = "contact_name")
     private String contactName;
-
-    @Column(name = "country")
     private String country;
-
-    @Column(name = "postal_code")
     private String postalCode;
 
-    public Integer getCustomerId() {
-        return customerId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getCustomerName() {
@@ -87,3 +66,4 @@ public class Customer {
         this.postalCode = postalCode;
     }
 }
+

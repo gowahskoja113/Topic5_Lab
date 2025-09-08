@@ -1,43 +1,28 @@
-package com.example.lab1.entity;
+package com.example.lab1.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-@Entity
-@Table(name = "customers")
-public class Customer {
+public class CustomerRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id")
-    private Integer customerId;
-
-    @Column(name = "customer_name")
+    @NotBlank(message = "Customer name is required")
+    @Size(max = 255, message = "Customer name must be at most 255 characters")
     private String customerName;
 
-    @Column(name = "address")
+    @Size(max = 255)
     private String address;
 
-    @Column(name = "city")
+    @Size(max = 255)
     private String city;
 
-    @Column(name = "contact_name")
+    @Size(max = 255)
     private String contactName;
 
-    @Column(name = "country")
+    @Size(max = 255)
     private String country;
 
-    @Column(name = "postal_code")
+    @Size(max = 255)
     private String postalCode;
-
-    public Integer getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
-    }
 
     public String getCustomerName() {
         return customerName;
