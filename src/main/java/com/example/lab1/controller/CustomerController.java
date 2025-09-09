@@ -24,12 +24,10 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerResponse> getCustomerById(int id) {
-        CustomerResponse customer = customerService.getCustomerById(id);
-        return (customer != null)
-                ? ResponseEntity.ok(customer)
-                : ResponseEntity.notFound().build();
+    public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable Integer id) {
+        return ResponseEntity.ok(customerService.getCustomerById(id));
     }
+
 
     @PostMapping
     public ResponseEntity<CustomerResponse> createCustomer(@Valid @RequestBody CustomerRequest request) {

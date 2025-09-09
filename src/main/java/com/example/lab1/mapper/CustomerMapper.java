@@ -21,6 +21,7 @@ public class CustomerMapper {
         CustomerResponse response = new CustomerResponse();
         response.setId(customer.getCustomerId());
         response.setCustomerName(customer.getCustomerName());
+        response.setAddress(customer.getAddress());
         response.setCity(customer.getCity());
         response.setContactName(customer.getContactName());
         response.setCountry(customer.getCountry());
