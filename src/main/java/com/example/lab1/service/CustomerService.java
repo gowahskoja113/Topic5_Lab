@@ -2,8 +2,6 @@ package com.example.lab1.service;
 
 import com.example.lab1.dto.CustomerRequest;
 import com.example.lab1.dto.CustomerResponse;
-import com.example.lab1.dto.EmployeeRequest;
-import com.example.lab1.dto.EmployeeResponse;
 
 import java.util.List;
 
