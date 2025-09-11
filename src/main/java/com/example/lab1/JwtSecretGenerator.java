@@ -4,7 +4,7 @@ import java.util.Base64;
 
 public class JwtSecretGenerator {
     public static void main(String[] args) {
-        byte[] key = new byte[64]; // 512-bit key (an toàn cho HS512)
+        byte[] key = new byte[64];
         new SecureRandom().nextBytes(key);
         String secret = Base64.getEncoder().encodeToString(key);
         System.out.println(secret);
