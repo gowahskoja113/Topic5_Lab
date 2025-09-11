@@ -42,8 +42,11 @@ public class AuthService {
 
     public AuthResponse login(AuthRequest request) {
         var user = userRepository.findByUsername(request.username())
-                .orElseThrow();
-        // Tạo JWT token
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
+
+        if (!BCrypt.checkpw(request.password(), user.getPassword()))
+            throw new InvalidCredentialsException("Invalid credentials");
+
         String token = jwtService.generateToken(user);
 
         return new AuthResponse(token);
