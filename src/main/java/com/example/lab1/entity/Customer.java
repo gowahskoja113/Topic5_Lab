@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "customers")
 public class Customer {
@@ -13,23 +16,26 @@ public class Customer {
     @Column(name = "customer_id")
     private Integer customerId;
 
-    @Column(name = "customer_name")
+    @Column(name = "customer_name", length = 255)
     private String customerName;
 
-    @Column(name = "address")
+    @Column(name = "address", length = 255)
     private String address;
 
-    @Column(name = "city")
+    @Column(name = "city", length = 255)
     private String city;
 
-    @Column(name = "contact_name")
+    @Column(name = "contact_name", length = 255)
     private String contactName;
 
-    @Column(name = "country")
+    @Column(name = "country", length = 50)
     private String country;
 
-    @Column(name = "postal_code")
+    @Column(name = "postal_code", length = 10)
     private String postalCode;
+
+    @OneToMany(mappedBy = "customer")
+    private Set<Order> orders = new HashSet<>();
 
     public Integer getCustomerId() {
         return customerId;

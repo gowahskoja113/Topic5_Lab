@@ -3,6 +3,8 @@ package com.example.lab1.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "employees")
@@ -24,6 +26,9 @@ public class Employee {
 
     @Column(name = "supervisor_id")
     private int supervisorId;
+
+    @OneToMany(mappedBy = "employee")
+    private Set<Order> orders = new HashSet<>();
 
     public int getId() {
         return id;
