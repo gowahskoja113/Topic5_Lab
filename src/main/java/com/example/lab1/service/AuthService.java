@@ -41,7 +41,7 @@ public class AuthService {
     }
 
     public AuthResponse login(AuthRequest request) {
-        var user = userRepository.findByUsername(request.username())
+        User user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
 
         if (!BCrypt.checkpw(request.password(), user.getPassword()))
@@ -49,7 +49,11 @@ public class AuthService {
 
         String token = jwtService.generateToken(user);
 
-        return new AuthResponse(token);
+        return AuthResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .role(user.getRole().name())
+                .token(token)
+                .build();
     }
-
 }
