@@ -2,10 +2,10 @@ package com.example.lab1.service;
 
 import com.example.lab1.entity.User;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import io.jsonwebtoken.io.Decoders;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
@@ -13,12 +13,13 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    private final SecretKey key;
-    private final long expMinutes;
+    private final SecretKey base64Secret;
+    private final Long expMinutes;
 
-    public JwtService(@Value("${jwt.secret}") String base64Secret,
-                      @Value("${jwt.expMinutes:60}") long expMinutes) {
-        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(base64Secret));
+    public JwtService(
+            @Value("${jwt.secret}") String base64Secret,
+            @Value("${jwt.exp-minutes:60}") Long expMinutes) {
+        this.base64Secret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(base64Secret));
         this.expMinutes = expMinutes;
     }
 
@@ -26,16 +27,19 @@ public class JwtService {
         Instant now = Instant.now();
         return Jwts.builder()
                 .subject(user.getUsername())
-                .claim("role", user.getRole())
+                .claim("role", user.getRole().name())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(expMinutes * 60)))
-                .signWith(key)
+                .signWith(base64Secret)
                 .compact();
     }
-
     public String extractUsername(String token) {
-        return Jwts.parser().verifyWith(key).build()
-                .parseSignedClaims(token).getPayload().getSubject();
+        return Jwts.parser()
+                .verifyWith(base64Secret)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
 
 }

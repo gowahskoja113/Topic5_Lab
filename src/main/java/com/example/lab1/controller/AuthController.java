@@ -1,12 +1,16 @@
 package com.example.lab1.controller;
 
+
 import com.example.lab1.dto.AuthRequest;
 import com.example.lab1.dto.AuthResponse;
 import com.example.lab1.dto.RegisterRequest;
 import com.example.lab1.dto.RegisterResponse;
 import com.example.lab1.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,4 +31,5 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
         return ResponseEntity.ok(authService.login(authRequest));
     }
+
 }

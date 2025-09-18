@@ -20,6 +20,13 @@ public class EmployeeRequest {
     @NotNull(message = "SupervisorId cannot be null")
     private Integer supervisorId;
 
+    public EmployeeRequest(String lastName, String firstName, LocalDate birthDate, Integer supervisorId) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.birthDate = birthDate;
+        this.supervisorId = supervisorId;
+    }
+
     public String getFirstName() {
         return firstName;
     }

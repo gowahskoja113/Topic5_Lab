@@ -10,6 +10,18 @@ public class EmployeeResponse {
     private LocalDate birthDate;
     private Integer supervisorId;
 
+    public EmployeeResponse(Integer id, String firstName, String lastName, LocalDate birthDate, Integer supervisorId) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.supervisorId = supervisorId;
+    }
+
+    public EmployeeResponse() {
+
+    }
+
     public Integer getId() {
         return id;
     }

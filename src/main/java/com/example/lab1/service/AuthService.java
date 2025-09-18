@@ -6,14 +6,20 @@ import com.example.lab1.dto.RegisterRequest;
 import com.example.lab1.dto.RegisterResponse;
 import com.example.lab1.entity.Role;
 import com.example.lab1.entity.User;
-import com.example.lab1.exception.InvalidCredentialsException;
 import com.example.lab1.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthService {
+    @Autowired
+    AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
@@ -40,20 +46,13 @@ public class AuthService {
         );
     }
 
+    @Transactional
     public AuthResponse login(AuthRequest request) {
-        User user = userRepository.findByUsername(request.username())
-                .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
-
-        if (!BCrypt.checkpw(request.password(), user.getPassword()))
-            throw new InvalidCredentialsException("Invalid credentials");
-
-        String token = jwtService.generateToken(user);
-
-        return AuthResponse.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .role(user.getRole().name())
-                .token(token)
-                .build();
+        var authToken = new UsernamePasswordAuthenticationToken(
+                request.username(), request.password());
+        authenticationManager.authenticate(authToken);
+        var user = userRepository.findByUsername(request.username())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
+        return new AuthResponse(jwtService.generateToken(user));
     }
 }
