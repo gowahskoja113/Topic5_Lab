@@ -18,7 +18,7 @@ public class Order {
     private LocalDateTime orderDate;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
+    @JoinColumn(name = "customer    _id", referencedColumnName = "customer_id")
     private Customer customer;
 
     @ManyToOne

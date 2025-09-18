@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,11 +20,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -129,4 +127,87 @@ public class EmployeeServiceImplTest {
         verifyNoMoreInteractions(employeeRepository, employeeMapper);
     }
 
+    //                  updateEmployee
+// ===============================================
+    @Test
+    @DisplayName("updateEmployee: cập nhật đúng các field và trả về Response khi tìm thấy")
+    void updateEmployee_returnsUpdatedResponse_whenFound() {
+        // Arrange
+        when(employeeRepository.findById(2)).thenReturn(Optional.of(employeeSon));
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employeeSon);
+        when(employeeMapper.toResponse(employeeSon)).thenReturn(resSon);
+
+        EmployeeRequest updateRequest = new EmployeeRequest("Tran-New", "Bob-New", DOB_NEW, 123);
+
+        // Captured = Employee object
+        ArgumentCaptor<Employee> employeeCaptor = ArgumentCaptor.forClass(Employee.class);
+
+        // Act
+        EmployeeResponse updated = employeeService.updateEmployee(2, updateRequest);
+
+        // Assert
+        assertThat(updated.getId()).isEqualTo(2);
+
+        verify(employeeRepository).findById(2);
+        verify(employeeRepository).save(employeeCaptor.capture()); // lấy parameter thật sự từ save(...)
+        verify(employeeMapper).toResponse(employeeSon);
+        verifyNoMoreInteractions(employeeRepository, employeeMapper);
+
+        Employee captured = employeeCaptor.getValue();
+        assertThat(captured.getLastName()).isEqualTo("Tran-New");
+        assertThat(captured.getFirstName()).isEqualTo("Bob-New");
+        assertThat(captured.getBirthDate()).isEqualTo(DOB_NEW);
+        assertThat(captured.getSupervisorId()).isEqualTo(123);
+    }
+
+    @Test
+    @DisplayName("updateEmployee: ném ResourceNotFoundException khi không tìm thấy")
+    void updateEmployee_throwsNotFound_whenEmployeeMissing() {
+        // Arrange
+        when(employeeRepository.findById(999)).thenReturn(Optional.empty());
+        EmployeeRequest updateRequest = new EmployeeRequest("A", "B", DOB_NEW, null);
+
+        // Act & Assert
+        assertThatThrownBy(() -> employeeService.updateEmployee(999, updateRequest))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Employee not found 999");
+
+        verify(employeeRepository).findById(999);
+        verifyNoMoreInteractions(employeeRepository, employeeMapper);
+    }
+
+// ===============================================
+//                  deleteEmployee
+// ===============================================
+
+    @Test
+    @DisplayName("deleteEmployee: xoá khi tồn tại")
+    void deleteEmployee_deletes_whenExists() {
+        // Arrange
+        when(employeeRepository.existsById(1)).thenReturn(true);
+
+        // Act
+        employeeService.deleteEmployee(1);
+
+        // Assert
+        verify(employeeRepository).existsById(1);
+        verify(employeeRepository).deleteById(1);
+        verifyNoMoreInteractions(employeeRepository, employeeMapper);
+    }
+
+    @Test
+    @DisplayName("deleteEmployee: ném ResourceNotFoundException khi không tồn tại")
+    void deleteEmployee_throwsNotFound_whenMissing() {
+        // Arrange
+        when(employeeRepository.existsById(999)).thenReturn(false);
+
+        // Act & Assert
+        assertThatThrownBy(() -> employeeService.deleteEmployee(999))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Employee not found 999");
+
+        verify(employeeRepository).existsById(999);
+        verify(employeeRepository, never()).deleteById(anyInt());
+        verifyNoMoreInteractions(employeeRepository, employeeMapper);
+    }
 }
